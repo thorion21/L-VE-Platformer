@@ -18,6 +18,10 @@ function Vector2:__sub(o) return Vector2:new(self.x - o.x, self.y - o.y) end
 function Vector2:__mul(o) return Vector2:new(self.x * o.x, self.y * o.y) end
 function Vector2:__div(o) return Vector2:new(self.x / o.x, self.y / o.y) end
 function Vector2:__eq(o) return self.x == o.x and self.y == o.y end
+function Vector2:__le(o) return self.x <= o.x and self.y <= o.y end
+function Vector2:__lt(o) return self.x < o.x and self.y < o.y end
+function Vector2:__ge(o) return self.x >= o.x and self.y >= o.y end
+function Vector2:__gt(o) return self.x > o.x and self.y > o.y end
 function Vector2:dot(o) return (self.x * o.x) + (self.y * o.y) end
 function Vector2:magnitude() return math.sqrt((self.x ^ 2) + (self.y ^ 2)) end
 function Vector2:copy() return Vector2:new(self.x, self.y) end
