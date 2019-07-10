@@ -10,4 +10,13 @@ function utils.uuid()
     end)
 end
 
+function utils.AddComponents(entity, components)
+    assert(type(components) == 'table', "components not a table!")
+    for c_type, c_value in pairs(components) do
+        entity.components[c_type] = c_value
+    end
+
+    return entity
+end
+
 return utils

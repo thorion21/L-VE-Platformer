@@ -14,4 +14,6 @@ function mydebug.print_entity(e)
     print('loaded', e.loaded, '(Property)')
 end
 
+function mydebug.tprint(t) for k, v in pairs(t) do print(k, v) end end
+
 return mydebug

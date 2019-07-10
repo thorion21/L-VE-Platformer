@@ -1,23 +1,16 @@
 local Entity = require("Entity")
 local component = require("Component")
+local utils = require("utils/utils")
 
 local Prefabs = {}
 
 function Prefabs:player()
     local entity = Entity:new()
-
-    entity:add({
-        player = true,
+    local components = {
         position = component.position(),
         health = component.health()
-    })
-
-    entity:setTags({
-        "player",
-        "target"
-    })
-
-    return entity
+    }
+    return utils.AddComponents(entity, components)
 end
 
 return Prefabs

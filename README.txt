@@ -8,8 +8,10 @@ README
 
 @ World
 
-    Manages all entities and components and filters the according component
-fields to match the system
+    Manages all entities, components and filters the according component
+fields to match the system.
+    Manages the insertion of a new system or removal of an already existing
+one.
 
 @ Entity
 
@@ -28,3 +30,34 @@ something.
 
     The system is responsible to identify and implement the behavior of
 every associated component from an entity.
+    An entity manager will separate every component and put them in
+labeled systems (a table which key is represented by the entities ID).
+This is done for performance reasons, because when a system has to update
+a entity it's obvious that the impact of checking all the entities to find
+that respective one which has a specific component is immensely huge.
+
+    But what it is to do when a system requires more than just 1 component
+to be able to perform it's action?
+    Systems should have access to other systems data? To find if the respective
+entity also possesses the second, third or any nth component that this system
+needs?
+
+    R: Every system will hold a table for every entities components that
+possess an aspect of that system. More than that, it can possess all
+components that matches the aspect of that particular system. Using this
+approach we can avoid systems to interrogate other ones to gain data.
+
+Example:
+    Render System
+    Movement System
+
+    The two mentioned above need a reference to the position component of
+that entity. By so, if both need that information it will be pointless
+to have a definition of a system that clearly is too strict (to separate
+every component). In this case, a system will have ALL components that
+interacts with and needs to perform its operation.
+    
+
+@ General ideas:
+
+    { - Entities are represented by a table which has an - }

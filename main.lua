@@ -20,4 +20,7 @@ local mydebug = require("utils/mydebug")
 -- end
 
 local player = Prefabs:player()
-mydebug.print_entity(player)
+--mydebug.print_entity(player)
+World:load()
+-- World:update()
+World:add(player)

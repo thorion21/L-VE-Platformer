@@ -1,17 +1,17 @@
-local Entity = {}
 
-function Entity:new()
-    local e = {
-        value = 22
-    }
-    self.__index = self
-    return setmetatable(e, self)
+local d = require "utils/mydebug"
+
+x = {
+    user1 = {{x=2,y=3}},
+    user2 = {{x=110, y=111}}
+}
+
+if x.user1 ~= nil then
+    x.user1[#x.user1 + 1] = {a=99, b=98}
+else
+    x.user1 = {{a=22, b=23}}
 end
 
-function Entity:change()
-    self.value = self.value + 1
-end
-
-local e = Entity:new()
-e:change()
-print(e.value)
+print('-----------')
+d.tprint(x.user1[1])
+d.tprint(x.user1[2])
