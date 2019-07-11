@@ -7,16 +7,16 @@ local World = require("World")
 local Prefabs = require("Prefabs")
 local mydebug = require("utils/mydebug")
 
--- function love.load(arg)
---     world = World:new()
+-- function love.load()
+--     World:load()
 -- end
 --
 -- function love.update(dt)
---     world:update(dt)
+--     World:update(dt)
 -- end
 --
 -- function love.draw()
---     world:draw()
+--     World:draw()
 -- end
 
 local player = Prefabs:player()
@@ -24,3 +24,5 @@ local player = Prefabs:player()
 World:load()
 -- World:update()
 World:add(player)
+World:update(69)
+World:remove(player)

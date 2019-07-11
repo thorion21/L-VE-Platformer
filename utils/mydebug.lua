@@ -15,5 +15,15 @@ function mydebug.print_entity(e)
 end
 
 function mydebug.tprint(t) for k, v in pairs(t) do print(k, v) end end
+function mydebug.fprint(t)
+    for k, v in pairs(t) do
+        if (type(v) == 'table') then
+            print(k, v)
+            mydebug.fprint(v)
+        else
+            print(k, v)
+        end
+    end
+end
 
 return mydebug

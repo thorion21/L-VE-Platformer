@@ -7,8 +7,8 @@ local Prefabs = {}
 function Prefabs:player()
     local entity = Entity:new()
     local components = {
-        position = component.position(),
-        health = component.health()
+        position = component.position(100, 200),
+        health = component.health(30)
     }
     return utils.AddComponents(entity, components)
 end

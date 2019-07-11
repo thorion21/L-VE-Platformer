@@ -9,8 +9,8 @@ end
 
 function component.health(amount)
     return {
-        health = amount,
-        max_health = amount
+        health = amount or 0,
+        max_health = amount or 0
     }
 end
 
