@@ -9,4 +9,8 @@ x = {
     }
 }
 
-d.fprint(x)
+y = {}
+pl = {a=2,b=3}
+y[#y + 1] = pl
+print(#y)
+--d.fprint(x)

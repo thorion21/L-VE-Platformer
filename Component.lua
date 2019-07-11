@@ -14,4 +14,10 @@ function component.health(amount)
     }
 end
 
+function component.render()
+    return {
+        r = true
+    }
+end
+
 return component

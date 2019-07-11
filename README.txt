@@ -56,8 +56,12 @@ that entity. By so, if both need that information it will be pointless
 to have a definition of a system that clearly is too strict (to separate
 every component). In this case, a system will have ALL components that
 interacts with and needs to perform its operation.
-    
 
-@ General ideas:
-
-    { - Entities are represented by a table which has an - }
+@ Steps to add a new component in ECS
+    1) Define the component in Component.lua;
+    2) Add the component to a Prefab;
+    3) Define a system that will control that component in System.lua;
+    4) Fully define a system in World:GetSystems() where the function
+    named above is actually bound to the components that system operates on;
+    5) Finalize by connecting the system(s) and the component into
+    World:GetSwitcher().

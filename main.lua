@@ -3,26 +3,22 @@
     Main temporary file to test everything.
 ]]
 
-local World = require("World")
-local Prefabs = require("Prefabs")
+local world = require("World")
+local prefabs = require("Prefabs")
 local mydebug = require("utils/mydebug")
 
--- function love.load()
---     World:load()
--- end
---
--- function love.update(dt)
---     World:update(dt)
--- end
---
--- function love.draw()
---     World:draw()
--- end
+function love.load()
+    World = world:new()
+    World:load()
 
-local player = Prefabs:player()
---mydebug.print_entity(player)
-World:load()
--- World:update()
-World:add(player)
-World:update(69)
-World:remove(player)
+    local player = prefabs:player()
+    World:add(player)
+end
+
+function love.update(dt)
+    World:update(dt)
+end
+
+function love.draw()
+    World:draw()
+end
