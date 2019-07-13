@@ -18,7 +18,8 @@ function Prefabs:player()
             const.PLAYER_FRICTION,
             const.PLAYER_MAX_SPEED
         ),
-        render = component.render()
+        collider = component.collider(50, 50),
+        render = true
     }
     return utils.AddComponents(entity, components)
 end

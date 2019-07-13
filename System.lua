@@ -4,8 +4,11 @@ local m8 = require("utils/math")
 local const = require("utils/constants")
 
 local system = {}
+local World = {}
+local entities = {}
+local colliderWorld = {}
 
-function system.input(dt, id, c, entities)
+function system.input(dt, id, c)
     local velocity = c.velocity
     local isPressed = love.keyboard.isDown
 
@@ -20,10 +23,9 @@ function system.input(dt, id, c, entities)
         velocity.y = -const.PLAYER_JUMP_FORCE
     end
 
-    print(velocity.x)
 end
 
-function system.friction(dt, id, c, entities)
+function system.friction(dt, id, c)
     local position = c.position
     local velocity = c.velocity
 
@@ -36,12 +38,14 @@ function system.friction(dt, id, c, entities)
         velocity.x = 0
     end
 
-    velocity.y = velocity.y + const.GRAVITY * dt
-    print(velocity.y)
-    if velocity.y >= const.MAX_VELOCITY then
-        velocity.y = const.MAX_VELOCITY
-    end
+    velocity.y = math.min(velocity.y + const.GRAVITY * dt, const.MAX_VELOCITY)
+end
 
+function system.collision(dt, id, c)
+    local position = c.position
+    local velocity = c.velocity
+    local collider = c.collider
+    
 end
 
 function system.movement(dt, id, c, entities)
@@ -51,18 +55,29 @@ function system.movement(dt, id, c, entities)
     position.x = position.x + velocity.x * dt
     position.y = position.y + velocity.y * dt
 
+    -- Will be deleted
+    if position.y >= 1100 then
+        position.y = 1100
+        velocity.y = 0
+    end
 end
 
-function system.health(dt, id, c, entities)
+function system.health(dt, id, c)
     local health = c.health
     --print('HealthSystem active!', dt, health.health, health.max_health)
     --print('MoveSystem HEALTH!', dt, position.x, position.y)
 end
 
-function system.update(dt, process, components, entities)
+function system.update(dt, process, components)
     for entity_id, entity_components in pairs(components) do
-        process(dt, entity_id, entity_components, entities)
+        process(dt, entity_id, entity_components)
     end
+end
+
+function system.load(WWorld, Wentities, Wcollider)
+    World = WWorld
+    entities = Wentities
+    colliderWorld = Wcollider
 end
 
 function system.draw(entity)

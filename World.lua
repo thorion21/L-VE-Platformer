@@ -1,6 +1,7 @@
 local utils = require("utils/utils")
 local mydebug = require("utils/mydebug")
 local system = require("System")
+local bump = require("libs/bump")
 local World = {}
 
 function World:new()
@@ -10,7 +11,8 @@ function World:new()
         switcher = {},
         entities = {},
         systems = {},
-        orderedSystems = {}
+        orderedSystems = {},
+        colliderWorld = {}
     }
     self.__index = self
     return setmetatable(world, self)
@@ -24,6 +26,8 @@ function World:load()
     self.systems = self:GetSystems()
     self.switcher = self:GetSwitcher()
     self.orderedSystems = self:GetOrderedSystemList()
+    self.colliderWorld = bump.newWorld(64)
+    system.load(self, self.entities, self.colliderWorld)
 end
 
 function World:update(dt)
@@ -31,20 +35,33 @@ function World:update(dt)
     local e2r = self.entitiesToRemove
     for idx = #e2r, 1, -1 do
         self:removeFromWorld(e2r[idx])
+        self.colliderWorld:remove(e2r[idx])
         e2r[idx] = nil
     end
 
     -- Add all new entities (REVERSED ORDER)
     local e2a = self.entitiesToAdd
     for idx = #e2a, 1, -1 do
+        local e2a_comp = e2a[idx].components
         self:addInWorld(e2a[idx])
+
+        if e2a_comp.collider ~= nil then
+            self.colliderWorld:add(
+                e2a[idx],
+                e2a_comp.position.x,
+                e2a_comp.position.y,
+                e2a_comp.collider.width,
+                e2a_comp.collider.height
+            )
+        end
+
         e2a[idx] = nil
     end
 
     -- Updates all systems
     for _, system_proto in ipairs(self.orderedSystems) do
         local process = system_proto[1]
-        system.update(dt, process, system_proto.components, self.entities)
+        system.update(dt, process, system_proto.components)
     end
 end
 
@@ -94,8 +111,6 @@ function World:addInWorld(entity)
         ::continue_add::
     end
 
-    --mydebug.fprint(self.systems.health.components)
-
 end
 
 function World:remove(entity)
@@ -132,15 +147,18 @@ function World:GetSwitcher()
         -- of systems that use that component.
         position = {
             self.systems.movement,
-            self.systems.friction
+            self.systems.friction,
+            self.systems.collision
         },
         health = { self.systems.health },
         input = { self.systems.input },
         velocity = {
             self.systems.movement,
             self.systems.input,
-            self.systems.friction
-        }
+            self.systems.friction,
+            self.systems.collision
+        },
+        collider = { self.systems.collision }
     }
 end
 
@@ -149,7 +167,8 @@ function World:GetSystems()
         movement = { system.movement, components = {} },
         health = { system.health, components = {} },
         input = { system.input, components = {} },
-        friction = { system.friction, components = {} }
+        friction = { system.friction, components = {} },
+        collision = { system.collision, components = {} }
     }
 end
 
@@ -158,6 +177,7 @@ function World:GetOrderedSystemList()
     return {
         self.systems.input,
         self.systems.friction,
+        self.systems.collision,
         self.systems.movement,
         self.systems.health,
     }

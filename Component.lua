@@ -7,10 +7,10 @@ function component.position(x, y)
     }
 end
 
-function component.health(amount)
+function component.collider(width, height)
     return {
-        health = amount or 0,
-        max_health = amount or 0
+        width = width,
+        height = height
     }
 end
 
@@ -24,8 +24,11 @@ function component.velocity(x, y, acceleration, friction, max_speed)
     }
 end
 
-function component.render()
-    return true
+function component.health(amount)
+    return {
+        health = amount or 0,
+        max_health = amount or 0
+    }
 end
 
 return component

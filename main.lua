@@ -12,7 +12,6 @@ function love.load()
     World:load()
 
     local player = prefabs:player()
-    print(player.id)
     World:add(player)
 end
 
