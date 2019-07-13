@@ -23,7 +23,7 @@ function Vector2:__lt(o) return self.x < o.x and self.y < o.y end
 function Vector2:__ge(o) return self.x >= o.x and self.y >= o.y end
 function Vector2:__gt(o) return self.x > o.x and self.y > o.y end
 function Vector2:dot(o) return (self.x * o.x) + (self.y * o.y) end
-function Vector2:magnitude() return math.sqrt((self.x ^ 2) + (self.y ^ 2)) end
+function Vector2:magnitude() return ((self.x ^ 2) + (self.y ^ 2)) ^ 0.5 end
 function Vector2:copy() return Vector2:new(self.x, self.y) end
 function Vector2:zero() return Vector2:new() end
 function Vector2:__tostring() return string.format("<Vector2 %.2f, %.2f>", self.x, self.y) end

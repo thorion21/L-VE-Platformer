@@ -19,4 +19,8 @@ function utils.AddComponents(entity, components)
     return entity
 end
 
+function utils.ToInt(boolean)
+    return boolean and 1 or 0
+end
+
 return utils

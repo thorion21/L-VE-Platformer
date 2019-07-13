@@ -5,6 +5,8 @@ local World = {}
 
 function World:new()
     local world = {
+        entitiesToAdd = {},
+        entitiesToRemove = {},
         switcher = {},
         entities = {},
         systems = {},
@@ -16,17 +18,33 @@ end
 
 function World:load()
     -- Loads all prerequisites
+    self.entities = {}
+    self.entitiesToAdd = {}
+    self.entitiesToRemove = {}
     self.systems = self:GetSystems()
     self.switcher = self:GetSwitcher()
     self.orderedSystems = self:GetOrderedSystemList()
-    self.entities = {}
 end
 
 function World:update(dt)
+    -- Remove all old entities (REVERSED ORDER)
+    local e2r = self.entitiesToRemove
+    for idx = #e2r, 1, -1 do
+        self:removeFromWorld(e2r[idx])
+        e2r[idx] = nil
+    end
+
+    -- Add all new entities (REVERSED ORDER)
+    local e2a = self.entitiesToAdd
+    for idx = #e2a, 1, -1 do
+        self:addInWorld(e2a[idx])
+        e2a[idx] = nil
+    end
+
     -- Updates all systems
     for _, system_proto in ipairs(self.orderedSystems) do
         local process = system_proto[1]
-        system.update(dt, process, system_proto.components)
+        system.update(dt, process, system_proto.components, self.entities)
     end
 end
 
@@ -44,6 +62,12 @@ function World:GetUniqueEntityId()
 end
 
 function World:add(entity)
+    local e2a = self.entitiesToAdd
+    e2a[#e2a + 1] = entity
+    return entity
+end
+
+function World:addInWorld(entity)
     -- Splits the entity into components and adds them to the
     -- corresponding systems (PARSER)
 
@@ -75,6 +99,12 @@ function World:add(entity)
 end
 
 function World:remove(entity)
+    local e2r = self.entitiesToRemove
+    e2r[#e2r + 1] = entity
+    return entity
+end
+
+function World:removeFromWorld(entity)
     -- Tells every system which registered that entity to remove it's
     -- information as it's no longer needed
 
@@ -100,23 +130,36 @@ function World:GetSwitcher()
     return {
         -- Each component is described here and returns a list
         -- of systems that use that component.
-        position = {self.systems.movement, self.systems.health},
-        health = {self.systems.health}
+        position = {
+            self.systems.movement,
+            self.systems.friction
+        },
+        health = { self.systems.health },
+        input = { self.systems.input },
+        velocity = {
+            self.systems.movement,
+            self.systems.input,
+            self.systems.friction
+        }
     }
 end
 
 function World:GetSystems()
     return {
-        movement = {system.movement, components = {}},
-        health = {system.health, components = {}}
+        movement = { system.movement, components = {} },
+        health = { system.health, components = {} },
+        input = { system.input, components = {} },
+        friction = { system.friction, components = {} }
     }
 end
 
 function World:GetOrderedSystemList()
     -- Returns the list of systems arranged in order of execution (update)
     return {
+        self.systems.input,
+        self.systems.friction,
         self.systems.movement,
-        self.systems.health
+        self.systems.health,
     }
 end
 

@@ -12,6 +12,7 @@ function love.load()
     World:load()
 
     local player = prefabs:player()
+    print(player.id)
     World:add(player)
 end
 
@@ -22,3 +23,12 @@ end
 function love.draw()
     World:draw()
 end
+
+-- World = world:new()
+-- World:load()
+--
+-- local player = prefabs:player()
+-- World:add(player)
+-- World:update(dt)
+-- World:draw()
+-- World:remove(player)

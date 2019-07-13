@@ -14,10 +14,18 @@ function component.health(amount)
     }
 end
 
-function component.render()
+function component.velocity(x, y, acceleration, friction, max_speed)
     return {
-        r = true
+        x = x,
+        y = y,
+        acceleration = acceleration,
+        friction = friction,
+        max_speed = max_speed
     }
+end
+
+function component.render()
+    return true
 end
 
 return component
