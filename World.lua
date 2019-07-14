@@ -2,6 +2,7 @@ local utils = require("utils/utils")
 local mydebug = require("utils/mydebug")
 local system = require("System")
 local bump = require("libs/bump")
+local Queue = require("utils/queue")
 local World = {}
 
 function World:new()
@@ -45,6 +46,7 @@ function World:update(dt)
         local e2a_comp = e2a[idx].components
         self:addInWorld(e2a[idx])
 
+        -- If the entity has a collider component
         if e2a_comp.collider ~= nil then
             self.colliderWorld:add(
                 e2a[idx],
@@ -164,11 +166,31 @@ end
 
 function World:GetSystems()
     return {
-        movement = { system.movement, components = {} },
-        health = { system.health, components = {} },
-        input = { system.input, components = {} },
-        friction = { system.friction, components = {} },
-        collision = { system.collision, components = {} }
+        movement = {
+            system.movement,
+            components = {},
+            messages = Queue:new()
+        },
+        health = {
+            system.health,
+            components = {},
+            messages = Queue:new()
+        },
+        input = {
+            system.input,
+            components = {},
+            messages = Queue:new()
+        },
+        friction = {
+            system.friction,
+            components = {},
+            messages = Queue:new()
+        },
+        collision = {
+            system.collision,
+            components = {},
+            messages = Queue:new()
+        }
     }
 end
 

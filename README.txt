@@ -65,3 +65,23 @@ interacts with and needs to perform its operation.
     named above is actually bound to the components that system operates on;
     5) Finalize by connecting the system(s) and the component into
     World:GetSwitcher().
+
+@ The addition of Entity Manager and Event Manager
+
+    Entity Manager should have a very basic function. Stores all entities,
+and when interrogated by systems with an ID, it should response with the
+entity associated with that respective ID.
+
+    It easier to pass around objects or entities but it shouldn't be done.
+    I'm not 100% sure about adding one right now, because the entity list
+is passed just one time, in system.load(). It's kind of the same, a bit less
+organized, but easier. What could be the clear advanteges of doing that?
+I see just a disadvantage.. having one object (EntityManager) that should
+remove the entity when it is due.
+
+    Event Manager - this is a must. If two or more systems want to communicate
+they really shouldn't keep a reference one to another. Instead, to pass a
+message with a tag (could be an enumerable) to an Event Manager and that
+manager should filter all the received messages and pass it only to those
+systems that are subscribed of listening to a message of that type.
+    Exactly like Observer Pattern.
