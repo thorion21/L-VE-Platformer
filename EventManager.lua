@@ -9,7 +9,7 @@ function EventManager:new()
 end
 
 function EventManager:load(world)
-    self.observers = systems
+    self.observers = world:
 end
 
 function EventManager:signal(EVENT_TYPE, ...)

@@ -75,7 +75,7 @@ entity associated with that respective ID.
     It easier to pass around objects or entities but it shouldn't be done.
     I'm not 100% sure about adding one right now, because the entity list
 is passed just one time, in system.load(). It's kind of the same, a bit less
-organized, but easier. What could be the clear advanteges of doing that?
+organized, but easier. What could be the clear advantages of doing that?
 I see just a disadvantage.. having one object (EntityManager) that should
 remove the entity when it is due.
 

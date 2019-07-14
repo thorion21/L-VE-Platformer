@@ -1,7 +1,13 @@
 local utils = require("utils/utils")
 local mydebug = require("utils/mydebug")
-local system = require("System")
 local bump = require("libs/bump")
+local SystemManager = require("Systems/System")
+local MovementSystem = require("Systems/MovementSystem")
+local HealthSystem = require("Systems/HealthSystem")
+local CollisionSystem = require("Systems/CollisionSystem")
+local FrictionSystem = require("Systems/FrictionSystem")
+local InputSystem = require("Systems/InputSystem")
+local DrawSystem = require("Systems/DrawSystem")
 local Queue = require("utils/queue")
 local World = {}
 
@@ -21,57 +27,72 @@ end
 
 function World:load()
     -- Loads all prerequisites
+    SystemManager:initialize()
+
     self.entities = {}
-    self.entitiesToAdd = {}
-    self.entitiesToRemove = {}
+    self.entitiesToAdd = Queue:new()
+    self.entitiesToRemove = Queue:new()
+    self.colliderWorld = bump.newWorld(64)
+
     self.systems = self:GetSystems()
     self.switcher = self:GetSwitcher()
     self.orderedSystems = self:GetOrderedSystemList()
-    self.colliderWorld = bump.newWorld(64)
-    system.load(self, self.entities, self.colliderWorld)
+
 end
 
 function World:update(dt)
+
     -- Remove all old entities (REVERSED ORDER)
     local e2r = self.entitiesToRemove
-    for idx = #e2r, 1, -1 do
-        self:removeFromWorld(e2r[idx])
-        self.colliderWorld:remove(e2r[idx])
-        e2r[idx] = nil
+    while not e2r:isEmpty()
+    do
+        local elem = e2r:dequeue()
+        local elem_comp = elem.components
+
+        -- If the entity has a collider component
+        self:removeFromWorld(elem)
+
+        if elem_comp.collider ~= nil then
+            self.colliderWorld:remove(elem)
+        end
+
+        self.entities[elem.id] = nil
+        elem.components = nil
+        elem = nil
     end
 
     -- Add all new entities (REVERSED ORDER)
     local e2a = self.entitiesToAdd
-    for idx = #e2a, 1, -1 do
-        local e2a_comp = e2a[idx].components
-        self:addInWorld(e2a[idx])
+    while not e2a:isEmpty()
+    do
+        local elem = e2a:dequeue()
+        local elem_comp = elem.components
+        self:addInWorld(elem)
 
         -- If the entity has a collider component
-        if e2a_comp.collider ~= nil then
+        if elem_comp.collider ~= nil then
             self.colliderWorld:add(
-                e2a[idx],
-                e2a_comp.position.x,
-                e2a_comp.position.y,
-                e2a_comp.collider.width,
-                e2a_comp.collider.height
+                elem,
+                elem_comp.position.x,
+                elem_comp.position.y,
+                elem_comp.collider.width,
+                elem_comp.collider.height
             )
         end
-
-        e2a[idx] = nil
     end
 
     -- Updates all systems
-    for _, system_proto in ipairs(self.orderedSystems) do
-        local process = system_proto[1]
-        system.update(dt, process, system_proto.components)
+    for _, system in ipairs(self.orderedSystems) do
+        SystemManager:update(system, dt)
     end
+
 end
 
 function World:draw()
     -- Draws all entities
     for _, entity in pairs(self.entities) do
         if entity.components.render ~= nil then
-            system.draw(entity)
+            self.systems.draw:process(entity)
         end
     end
 end
@@ -81,9 +102,7 @@ function World:GetUniqueEntityId()
 end
 
 function World:add(entity)
-    local e2a = self.entitiesToAdd
-    e2a[#e2a + 1] = entity
-    return entity
+    return self.entitiesToAdd:enqueue(entity)
 end
 
 function World:addInWorld(entity)
@@ -99,15 +118,15 @@ function World:addInWorld(entity)
 
         if sameAspectSystems == nil then goto continue_add end
 
-        for _, syst  in ipairs(sameAspectSystems) do
-            -- Check if it is already an entry in the system
-            local ent = syst.components[entity.id]
-
-            if ent == nil then
-                syst.components[entity.id] = {}
-            end
-
-            syst.components[entity.id][entity_component] = component_value
+        for _, system  in ipairs(sameAspectSystems) do
+            SystemManager:add(
+                system,
+                entity.id,
+                {
+                    entity_component,
+                    component_value
+                }
+            )
         end
 
         ::continue_add::
@@ -116,9 +135,7 @@ function World:addInWorld(entity)
 end
 
 function World:remove(entity)
-    local e2r = self.entitiesToRemove
-    e2r[#e2r + 1] = entity
-    return entity
+    return self.entitiesToRemove:enqueue(entity)
 end
 
 function World:removeFromWorld(entity)
@@ -130,17 +147,12 @@ function World:removeFromWorld(entity)
 
         if sameAspectSystems == nil then goto continue_remove end
 
-        for _, syst in ipairs(sameAspectSystems) do
-            syst.components[entity.id] = nil
+        for _, system in ipairs(sameAspectSystems) do
+            SystemManager:remove(system, entity.id)
         end
 
         ::continue_remove::
     end
-
-    -- Additional removal
-    self.entities[entity.id] = nil
-    entity.components = nil
-    entity = nil
 end
 
 function World:GetSwitcher()
@@ -153,7 +165,6 @@ function World:GetSwitcher()
             self.systems.collision
         },
         health = { self.systems.health },
-        input = { self.systems.input },
         velocity = {
             self.systems.movement,
             self.systems.input,
@@ -166,31 +177,12 @@ end
 
 function World:GetSystems()
     return {
-        movement = {
-            system.movement,
-            components = {},
-            messages = Queue:new()
-        },
-        health = {
-            system.health,
-            components = {},
-            messages = Queue:new()
-        },
-        input = {
-            system.input,
-            components = {},
-            messages = Queue:new()
-        },
-        friction = {
-            system.friction,
-            components = {},
-            messages = Queue:new()
-        },
-        collision = {
-            system.collision,
-            components = {},
-            messages = Queue:new()
-        }
+        movement    =       MovementSystem:new(),
+        health      =       HealthSystem:new(),
+        input       =       InputSystem:new(),
+        friction    =       FrictionSystem:new(),
+        collision   =       CollisionSystem:new(),
+        draw        =       DrawSystem:new()
     }
 end
 
