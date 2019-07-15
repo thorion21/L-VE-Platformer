@@ -1,32 +1,26 @@
-README
+# L-VE (2D platformer implemented using ECS)
 
-@ World
-@ Entity
-@ Component
-@ System
-
-
-# World
+## World
 
    Manages all entities, components and filters the according component
 fields to match the system.
    Manages the insertion of a new system or removal of an already existing
 one.
 
-# Entity
+## Entity
 
    Every entity has an unique ID (even if multiple instances of the same
 entity exists). Each entity is defined by its components. Entity class
 only has its components mentioned and different parameters in order to
 customize its personality.
 
-# Component
+## Component
 
    Represents a so called 'container' which values represents its entity
 attributes and also, tells the system that this entity is capable of doing
 something.
 
-# System
+## System
 
    The system is responsible to identify and implement the behavior of
 every associated component from an entity.
@@ -57,16 +51,16 @@ to have a definition of a system that clearly is too strict (to separate
 every component). In this case, a system will have ALL components that
 interacts with and needs to perform its operation.
 
-## Steps to add a new component in ECS
-    1) Define the component in Component.lua;
-    2) Add the component to a Prefab;
-    3) Define a system that will control that component in System.lua;
-    4) Fully define a system in World:GetSystems() where the function
-    named above is actually bound to the components that system operates on;
-    5) Finalize by connecting the system(s) and the component into
-    World:GetSwitcher().
+### Steps to add a new component in ECS
+         1. Define the component in Component.lua;
+         2. Add the component to a Prefab;
+         3. Define a system that will control that component in System.lua;
+         4. Fully define a system in World:GetSystems() where the function
+            named above is actually bound to the components that system operates on;
+         5. Finalize by connecting the system(s) and the component
+            into World:GetSwitcher().
 
-## The addition of Entity Manager and Event Manager
+### The addition of Entity Manager and Event Manager
 
    Entity Manager should have a very basic function. Stores all entities,
 and when interrogated by systems with an ID, it should response with the
