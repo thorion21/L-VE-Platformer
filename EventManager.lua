@@ -1,17 +1,22 @@
-local EventManager = {}
+local class = require("libs/middleclass")
+local SystemManager = require("Systems/System")
 
-function EventManager:new()
-    local em = {
-        observers = {}
+local EventManager = class('EventManager')
+
+function EventManager:initialize(systems)
+    print('Doing it right?')
+    self.systems = systems
+    self.events = {
+        MSG_PLAY_SOUND = { self.systems.sound },
     }
-    self.__index = self
-    return setmetatable(em, self)
-end
-
-function EventManager:load(world)
-    self.observers = systems
 end
 
 function EventManager:signal(EVENT_TYPE, ...)
+    local systems_to_send = self.events[EVENT_TYPE]
 
+    for _, system in pairs(systems_to_send) do
+        SystemManager:signal(system, { EVENT_TYPE, ... })
+    end
 end
+
+return EventManager

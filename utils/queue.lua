@@ -13,6 +13,7 @@ function Queue:enqueue (value)
     local first = self.first - 1
     self.first = first
     self[first] = value
+    return value
 end
 
 function Queue:dequeue ()
