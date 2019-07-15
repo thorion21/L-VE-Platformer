@@ -4,11 +4,13 @@ local class = require("libs/middleclass")
 
 local MovementSystem = class('MovementSystem', System)
 
-function MovementSystem:initialize()
+function MovementSystem:initialize(SystemManager)
     self.name = 'movement'
     self.components = {}
     self.messages = Queue:new()
-    System.register(self, self)
+    self.SystemManager = SystemManager
+
+    self.SystemManager:register(self, self)
 end
 
 function MovementSystem:process(dt, id, components)

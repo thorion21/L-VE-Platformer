@@ -5,13 +5,15 @@ local System = require("Systems/System")
 local const = require("utils/constants")
 local class = require("libs/middleclass")
 
-local InputSystem = class('InputSystem', System)
+local InputSystem = class('InputSystem')
 
-function InputSystem:initialize()
+function InputSystem:initialize(SystemManager)
     self.name = 'input'
     self.components = {}
     self.messages = Queue:new()
-    System.register(self, self)
+    self.SystemManager = SystemManager
+
+    self.SystemManager:register(self, self)
 end
 
 function InputSystem:process(dt, id, components)
@@ -27,6 +29,10 @@ function InputSystem:process(dt, id, components)
 
     if isJumping then
         velocity.y = -const.PLAYER_JUMP_FORCE
+    end
+
+    if isPressed('x') then
+        self.SystemManager:signal('MSG_PLAY_SOUND', 'bunaaa signal!')
     end
 end
 

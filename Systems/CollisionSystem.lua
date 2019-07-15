@@ -4,11 +4,13 @@ local class = require("libs/middleclass")
 
 local CollisionSystem = class('CollisionSystem', System)
 
-function CollisionSystem:initialize()
+function CollisionSystem:initialize(SystemManager)
     self.name = 'collision'
     self.components = {}
     self.messages = Queue:new()
-    System.register(self, self)
+    self.SystemManager = SystemManager
+
+    self.SystemManager:register(self, self)
 end
 
 function CollisionSystem:process(dt, id, components)

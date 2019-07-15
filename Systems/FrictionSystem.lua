@@ -6,11 +6,13 @@ local class = require("libs/middleclass")
 
 local FrictionSystem = class('FrictionSystem', System)
 
-function FrictionSystem:initialize()
+function FrictionSystem:initialize(SystemManager)
     self.name = 'friction'
     self.components = {}
     self.messages = Queue:new()
-    System.register(self, self)
+    self.SystemManager = SystemManager
+
+    self.SystemManager:register(self, self)
 end
 
 function FrictionSystem:process(dt, id, components)

@@ -4,11 +4,13 @@ local class = require("libs/middleclass")
 
 local DrawSystem = class('DrawSystem', System)
 
-function DrawSystem:initialize()
+function DrawSystem:initialize(SystemManager)
     self.name = 'draw'
     self.components = {}
     self.messages = Queue:new()
-    System.register(self, self)
+    self.SystemManager = SystemManager
+
+    self.SystemManager:register(self, self)
 end
 
 function DrawSystem:process(entity)

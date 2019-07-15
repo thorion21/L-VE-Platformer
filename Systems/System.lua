@@ -4,10 +4,17 @@ local System = class('System')
 
 function System:initialize()
     self.systems = {}
+    self.EventManager = nil
+
+    return self
 end
 
 function System:register(new_system)
     self.systems[new_system.name] = new_system
+end
+
+function System:set(EventManager)
+    self.EventManager = EventManager
 end
 
 function System:update(system, dt)
@@ -34,8 +41,12 @@ function System:remove(system, id)
     system.components[id] = nil
 end
 
-function System:signal(system, message)
-    system.messages.enqueue(message)
+function System:signal(...)
+    self.EventManager:signal(...)
+end
+
+function System:announce(system, message)
+    system.messages:enqueue(message)
 end
 
 return System

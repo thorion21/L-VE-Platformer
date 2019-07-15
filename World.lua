@@ -16,7 +16,7 @@ local World = class('World')
 
 function World:initialize()
     -- Loads all prerequisites
-    SystemManager:initialize()
+    self.systemManager = SystemManager:initialize()
 
     self.entities = {}
     self.entitiesToAdd = Queue:new()
@@ -26,8 +26,9 @@ function World:initialize()
     self.systems = self:GetSystems()
     self.switcher = self:GetSwitcher()
     self.orderedSystems = self:GetOrderedSystemList()
+    self.eventManager = EventManager:new(self.systems, self.systemManager)
 
-    EventManager:initialize(self.systems)
+    self.systemManager:set(self.eventManager)
 
 end
 
@@ -168,12 +169,12 @@ end
 
 function World:GetSystems()
     return {
-        movement    =       MovementSystem:new(),
-        health      =       HealthSystem:new(),
-        input       =       InputSystem:new(),
-        friction    =       FrictionSystem:new(),
-        collision   =       CollisionSystem:new(),
-        draw        =       DrawSystem:new()
+        movement    =       MovementSystem:new(self.systemManager),
+        health      =       HealthSystem:new(self.systemManager),
+        input       =       InputSystem:new(self.systemManager),
+        friction    =       FrictionSystem:new(self.systemManager),
+        collision   =       CollisionSystem:new(self.systemManager),
+        draw        =       DrawSystem:new(self.systemManager)
     }
 end
 
