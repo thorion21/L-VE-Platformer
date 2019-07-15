@@ -1,6 +1,6 @@
 local Queue = require("utils/queue")
-local class = require("libs/middleclass")
 local System = require("Systems/System")
+local class = require("libs/middleclass")
 
 local CollisionSystem = class('CollisionSystem', System)
 
@@ -12,11 +12,7 @@ function CollisionSystem:initialize()
 end
 
 function CollisionSystem:process(dt, id, components)
-    print('Collision system running!', dt)
-end
-
-function CollisionSystem:notify(message)
-    self.messages:enqueue(message)
+    --print('Collision system running!', dt)
 end
 
 return CollisionSystem

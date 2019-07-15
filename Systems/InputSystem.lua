@@ -1,9 +1,9 @@
 local m8 = require("utils/math")
 local utils = require("utils/utils")
 local Queue = require("utils/queue")
-local class = require("libs/middleclass")
 local System = require("Systems/System")
 local const = require("utils/constants")
+local class = require("libs/middleclass")
 
 local InputSystem = class('InputSystem', System)
 
@@ -28,10 +28,6 @@ function InputSystem:process(dt, id, components)
     if isJumping then
         velocity.y = -const.PLAYER_JUMP_FORCE
     end
-end
-
-function InputSystem:notify(message)
-    self.messages:enqueue(message)
 end
 
 return InputSystem

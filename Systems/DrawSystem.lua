@@ -1,6 +1,6 @@
 local Queue = require("utils/queue")
-local class = require("libs/middleclass")
 local System = require("Systems/System")
+local class = require("libs/middleclass")
 
 local DrawSystem = class('DrawSystem', System)
 
@@ -18,10 +18,6 @@ function DrawSystem:process(entity)
          entity.components.position.y,
          50, 50
      )
-end
-
-function DrawSystem:notify(message)
-    self.messages:enqueue(message)
 end
 
 return DrawSystem

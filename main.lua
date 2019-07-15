@@ -4,14 +4,12 @@
 ]]
 
 local world = require("World")
-local prefabs = require("Prefabs")
-local mydebug = require("utils/mydebug")
+local player = require("Prefabs/Player")
 
 function love.load()
     World = world:new()
-    World:load()
 
-    local player = prefabs:player()
+    local player = player:new()
     World:add(player)
 end
 

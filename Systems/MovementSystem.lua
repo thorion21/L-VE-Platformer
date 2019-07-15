@@ -1,6 +1,6 @@
 local Queue = require("utils/queue")
-local class = require("libs/middleclass")
 local System = require("Systems/System")
+local class = require("libs/middleclass")
 
 local MovementSystem = class('MovementSystem', System)
 
@@ -23,10 +23,6 @@ function MovementSystem:process(dt, id, components)
         position.y = 1100
         velocity.y = 0
     end
-end
-
-function MovementSystem:notify(message)
-    self.messages:enqueue(message)
 end
 
 return MovementSystem

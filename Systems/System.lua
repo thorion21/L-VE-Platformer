@@ -25,13 +25,17 @@ function System:add(system, id, component)
         system.components[id] = {}
     end
 
-    ctype, cvalue = component[1], component[2]
+    local ctype, cvalue = component[1], component[2]
 
     system.components[id][ctype] = cvalue
 end
 
 function System:remove(system, id)
     system.components[id] = nil
+end
+
+function System:signal(system, message)
+    system.messages.enqueue(message)
 end
 
 return System

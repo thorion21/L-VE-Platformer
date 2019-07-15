@@ -1,15 +1,11 @@
+local class = require("libs/middleclass")
 local World = require("World")
 
-local Entity = {}
+local Entity = class ('Entity')
 
-function Entity:new()
-    local ent = {
-        id = World:GetUniqueEntityId(),
-        components = {}
-    }
-
-    self.__index = self
-    return setmetatable(ent, self)
+function Entity:initialize(components)
+    self.id = World:GetUniqueEntityId()
+    self.components = components
 end
 
 return Entity

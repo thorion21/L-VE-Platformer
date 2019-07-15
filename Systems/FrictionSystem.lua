@@ -1,8 +1,8 @@
 local m8 = require("utils/math")
 local Queue = require("utils/queue")
+local System = require("Systems/System")
 local const = require("utils/constants")
 local class = require("libs/middleclass")
-local System = require("Systems/System")
 
 local FrictionSystem = class('FrictionSystem', System)
 
@@ -27,10 +27,6 @@ function FrictionSystem:process(dt, id, components)
     end
 
     velocity.y = math.min(velocity.y + const.GRAVITY * dt, const.MAX_VELOCITY)
-end
-
-function FrictionSystem:notify(message)
-    self.messages:enqueue(message)
 end
 
 return FrictionSystem

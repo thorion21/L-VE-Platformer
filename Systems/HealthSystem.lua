@@ -1,6 +1,6 @@
 local Queue = require("utils/queue")
-local class = require("libs/middleclass")
 local System = require("Systems/System")
+local class = require("libs/middleclass")
 
 local HealthSystem = class('HealthSystem', System)
 
@@ -12,11 +12,7 @@ function HealthSystem:initialize()
 end
 
 function HealthSystem:process(dt, id, components)
-    print('Health system running!', dt)
-end
-
-function HealthSystem:notify(message)
-    self.messages:enqueue(message)
+    --print('Health system running!', dt)
 end
 
 return HealthSystem

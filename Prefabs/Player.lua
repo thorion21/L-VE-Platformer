@@ -1,12 +1,11 @@
 local Entity = require("Entity")
 local component = require("Component")
-local utils = require("utils/utils")
 local const = require("utils/constants")
+local class = require("libs/middleclass")
 
-local Prefabs = {}
+local Player = class('Player', Entity)
 
-function Prefabs:player()
-    local entity = Entity:new()
+function Player:initialize()
     local components = {
         position = component.position(100, 500),
         health = component.health(30),
@@ -21,7 +20,7 @@ function Prefabs:player()
         collider = component.collider(50, 50),
         render = true
     }
-    return utils.AddComponents(entity, components)
+    Entity.initialize(self, components)
 end
 
-return Prefabs
+return Player

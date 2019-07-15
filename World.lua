@@ -1,31 +1,20 @@
-local utils = require("utils/utils")
-local mydebug = require("utils/mydebug")
+
 local bump = require("libs/bump")
-local SystemManager = require("Systems/System")
-local MovementSystem = require("Systems/MovementSystem")
-local HealthSystem = require("Systems/HealthSystem")
-local CollisionSystem = require("Systems/CollisionSystem")
-local FrictionSystem = require("Systems/FrictionSystem")
-local InputSystem = require("Systems/InputSystem")
-local DrawSystem = require("Systems/DrawSystem")
 local Queue = require("utils/queue")
-local World = {}
+local utils = require("utils/utils")
+local class = require("libs/middleclass")
+local EventManager = require("EventManager")
+local SystemManager = require("Systems/System")
+local DrawSystem = require("Systems/DrawSystem")
+local InputSystem = require("Systems/InputSystem")
+local HealthSystem = require("Systems/HealthSystem")
+local FrictionSystem = require("Systems/FrictionSystem")
+local MovementSystem = require("Systems/MovementSystem")
+local CollisionSystem = require("Systems/CollisionSystem")
 
-function World:new()
-    local world = {
-        entitiesToAdd = {},
-        entitiesToRemove = {},
-        switcher = {},
-        entities = {},
-        systems = {},
-        orderedSystems = {},
-        colliderWorld = {}
-    }
-    self.__index = self
-    return setmetatable(world, self)
-end
+local World = class('World')
 
-function World:load()
+function World:initialize()
     -- Loads all prerequisites
     SystemManager:initialize()
 
@@ -37,6 +26,8 @@ function World:load()
     self.systems = self:GetSystems()
     self.switcher = self:GetSwitcher()
     self.orderedSystems = self:GetOrderedSystemList()
+
+    EventManager:initialize(self.systems)
 
 end
 
