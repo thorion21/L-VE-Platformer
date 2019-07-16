@@ -4,11 +4,13 @@ local class = require("libs/middleclass")
 
 local MovementSystem = class('MovementSystem', System)
 
-function MovementSystem:initialize(SystemManager)
+function MovementSystem:initialize(SystemManager, EntityManager, ColliderWorld)
     self.name = 'movement'
     self.components = {}
     self.messages = Queue:new()
     self.SystemManager = SystemManager
+    self.EntityManager = EntityManager
+    self.ColliderWorld = ColliderWorld
 
     self.SystemManager:register(self, self)
 end
@@ -16,15 +18,9 @@ end
 function MovementSystem:process(dt, id, components)
     local position = components.position
     local velocity = components.velocity
+    local entity = self.EntityManager:get(id)
 
-    position.x = position.x + velocity.x * dt
-    position.y = position.y + velocity.y * dt
-
-    -- Will be deleted
-    if position.y >= 1100 then
-        position.y = 1100
-        velocity.y = 0
-    end
+    self.ColliderWorld:update(entity, position.x, position.y)
 end
 
 return MovementSystem

@@ -6,11 +6,12 @@ local class = require("libs/middleclass")
 
 local FrictionSystem = class('FrictionSystem', System)
 
-function FrictionSystem:initialize(SystemManager)
+function FrictionSystem:initialize(SystemManager, EntityManager)
     self.name = 'friction'
     self.components = {}
     self.messages = Queue:new()
     self.SystemManager = SystemManager
+    self.EntityManager = EntityManager
 
     self.SystemManager:register(self, self)
 end

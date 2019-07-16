@@ -4,11 +4,12 @@ local class = require("libs/middleclass")
 
 local HealthSystem = class('HealthSystem')
 
-function HealthSystem:initialize(SystemManager)
+function HealthSystem:initialize(SystemManager, EntityManager)
     self.name = 'health'
     self.components = {}
     self.messages = Queue:new()
     self.SystemManager = SystemManager
+    self.EntityManager = EntityManager
 
     self.SystemManager:register(self, self)
 end

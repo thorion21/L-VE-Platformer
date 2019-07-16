@@ -4,6 +4,7 @@ local Queue = require("utils/queue")
 local utils = require("utils/utils")
 local class = require("libs/middleclass")
 local EventManager = require("EventManager")
+local EntityManager = require("EntityManager")
 local SystemManager = require("Systems/System")
 local DrawSystem = require("Systems/DrawSystem")
 local InputSystem = require("Systems/InputSystem")
@@ -16,25 +17,27 @@ local World = class('World')
 
 function World:initialize()
     -- Loads all prerequisites
-    self.systemManager = SystemManager:initialize()
+    self.SM = SystemManager:initialize()
 
     self.entities = {}
     self.entitiesToAdd = Queue:new()
     self.entitiesToRemove = Queue:new()
     self.colliderWorld = bump.newWorld(64)
+    self.EnM = EntityManager:new(self.entities)
 
     self.systems = self:GetSystems()
     self.switcher = self:GetSwitcher()
     self.orderedSystems = self:GetOrderedSystemList()
-    self.eventManager = EventManager:new(self.systems, self.systemManager)
 
-    self.systemManager:set(self.eventManager)
 
+    self.EvM = EventManager:new(self.systems, self.SM)
+
+    self.SM:set(self.EvM)
 end
 
 function World:update(dt)
 
-    -- Remove all old entities (REVERSED ORDER)
+    -- Remove all old entities
     local e2r = self.entitiesToRemove
     while not e2r:isEmpty()
     do
@@ -53,7 +56,7 @@ function World:update(dt)
         elem = nil
     end
 
-    -- Add all new entities (REVERSED ORDER)
+    -- Add all new entities
     local e2a = self.entitiesToAdd
     while not e2a:isEmpty()
     do
@@ -103,6 +106,8 @@ function World:addInWorld(entity)
 
     -- Add the entity to game entities
     self.entities[entity.id] = entity
+
+    if entity.components.isMap ~= nil then return end
 
     for entity_component, component_value in pairs(entity.components) do
         -- Get all the systems to which the component have the same aspect
@@ -169,12 +174,12 @@ end
 
 function World:GetSystems()
     return {
-        movement    =       MovementSystem:new(self.systemManager),
-        health      =       HealthSystem:new(self.systemManager),
-        input       =       InputSystem:new(self.systemManager),
-        friction    =       FrictionSystem:new(self.systemManager),
-        collision   =       CollisionSystem:new(self.systemManager),
-        draw        =       DrawSystem:new(self.systemManager)
+        movement    =       MovementSystem  :new(self.SM, self.EnM, self.colliderWorld),
+        health      =       HealthSystem    :new(self.SM, self.EnM),
+        input       =       InputSystem     :new(self.SM, self.EnM),
+        friction    =       FrictionSystem  :new(self.SM, self.EnM),
+        collision   =       CollisionSystem :new(self.SM, self.EnM, self.colliderWorld),
+        draw        =       DrawSystem      :new(self.SM, self.EnM)
     }
 end
 

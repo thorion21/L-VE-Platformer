@@ -7,11 +7,12 @@ local class = require("libs/middleclass")
 
 local InputSystem = class('InputSystem')
 
-function InputSystem:initialize(SystemManager)
+function InputSystem:initialize(SystemManager, EntityManager)
     self.name = 'input'
     self.components = {}
     self.messages = Queue:new()
     self.SystemManager = SystemManager
+    self.EntityManager = EntityManager
 
     self.SystemManager:register(self, self)
 end

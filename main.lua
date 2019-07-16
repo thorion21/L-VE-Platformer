@@ -5,12 +5,15 @@
 
 local world = require("World")
 local player = require("Prefabs/Player")
+local ground = require("Prefabs/Ground")
 
 function love.load()
     World = world:new()
 
-    local player = player:new()
-    World:add(player)
+    local player1 = player:new()
+    local ground1 = ground:new()
+    World:add(player1)
+    World:add(ground1)
 end
 
 function love.update(dt)
