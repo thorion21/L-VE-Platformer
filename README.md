@@ -1,4 +1,4 @@
-# L-VE (2D platformer implemented using ECS)
+# L-VE (2D platformer framework implemented using ECS)
 
 ## World
 
